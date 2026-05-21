@@ -211,109 +211,98 @@
         </div>
     </footer>
 
-    <script>
-        // REPLACE THIS STRING WITH YOUR ACTUAL GOOGLE SHEET ID
-        const SHEET_ID = '198o-3rlln-iQ31eMYONbFUMBN-RUnLjUxlOtqxdlyPw';
+<script>
+    // Your verified Sheet ID from the screenshot tab
+    const SHEET_ID = '198o-3rlln-iQ31eMYONbFUMBN-RUnLjUxlOtqxdlyPw'; 
 
-        // URLs to fetch CSV data from specific sheets/tabs
-        const generalContentUrl = `https://docs.google.com/spreadsheets/d/${SHEET_ID}/gviz/tq?tqx=out:csv&sheet=GeneralContent`;
-        const announcementsUrl = `https://docs.google.com/spreadsheets/d/${SHEET_ID}/gviz/tq?tqx=out:csv&sheet=Announcements`;
+    // Dynamic Script Tag Injection to bypass cross-origin blocks
+    function loadSheetDataByScript(sheetName, callbackName) {
+        const script = document.createElement('script');
+        script.src = `https://docs.google.com/spreadsheets/d/${SHEET_ID}/gviz/tq?tqx=responseHandler:${callbackName}&sheet=${sheetName}`;
+        document.body.appendChild(script);
+    }
 
-        // Helper function to parse CSV format safely
-        function parseCSV(text) {
-            let lines = text.split('\n');
-            return lines.map(line => {
-                // Regex handles commas inside quotes correctly
-                let matches = line.match(/(".*?"|[^",\s]+)(?=\s*,|\s*$)/g) || [];
-                return matches.map(val => val.replace(/^"|"$/g, '').trim());
+    // 1. Handle the GeneralContent Tab Response
+    window.handleGeneralContent = function(response) {
+        try {
+            console.log("General content received successfully.");
+            const rows = response.table.rows;
+            const content = {};
+
+            rows.forEach(row => {
+                const key = row.c[0] ? row.c[0].v : null;
+                const value = row.c[1] ? row.c[1].v : null;
+                if (key) {
+                    content[key.toString().toLowerCase().trim()] = value;
+                }
             });
-        }
 
-        // Fetch and Populate Header, Vision, Mission, and Contacts
-        async function fetchGeneralContent() {
-            try {
-                const response = await fetch(generalContentUrl);
-                const dataText = await response.text();
-                const rows = parseCSV(dataText);
-
-                // Convert rows to a key-value mapping object
-                const content = {};
-                rows.forEach(row => {
-                    if(row[0] && row[1]) {
-                        content[row[0].toLowerCase()] = row[1];
-                    }
-                });
-
-                // Update UI elements securely
-                if(content['site_title']) {
-                    document.getElementById('site-title').textContent = content['site_title'];
-                    document.getElementById('site-title').classList.remove('loading');
-                }
-                if(content['welcome_message']) {
-                    document.getElementById('welcome-message').textContent = content['welcome_message'];
-                    document.getElementById('welcome-message').classList.remove('loading');
-                }
-                if(content['vision']) {
-                    document.getElementById('vision-text').textContent = content['vision'];
-                    document.getElementById('vision-text').classList.remove('loading');
-                }
-                if(content['mission']) {
-                    document.getElementById('mission-text').textContent = content['mission'];
-                    document.getElementById('mission-text').classList.remove('loading');
-                }
-                if(content['email']) document.getElementById('contact-email').textContent = content['email'];
-                if(content['phone']) document.getElementById('contact-phone').textContent = content['phone'];
-                if(content['address']) document.getElementById('contact-address').textContent = content['address'];
-
-            } catch (error) {
-                console.error("Error loading general data:", error);
+            // Update UI elements securely
+            if(content['site_title']) {
+                document.getElementById('site-title').textContent = content['site_title'];
+                document.getElementById('site-title').classList.remove('loading');
             }
-        }
-
-        // Fetch and Populate Announcements Array
-        async function fetchAnnouncements() {
-            try {
-                const response = await fetch(announcementsUrl);
-                const dataText = await response.text();
-                const rows = parseCSV(dataText);
-
-                const container = document.getElementById('announcements-container');
-                container.innerHTML = ''; // clear loading state
-
-                // Skip index 0 because it's the column headers (Date, Title, Content)
-                let itemFound = false;
-                for (let i = 1; i < rows.length; i++) {
-                    const [date, title, body] = rows[i];
-                    if (title && body) {
-                        itemFound = true;
-                        const announcementHTML = `
-                            <div class="announcement-item">
-                                <div class="announcement-date">${date || ''}</div>
-                                <h3 class="announcement-title">${title}</h3>
-                                <p style="margin: 5px 0 0 0; font-size:0.95rem;">${body}</p>
-                            </div>
-                        `;
-                        container.insertAdjacentHTML('beforeend', announcementHTML);
-                    }
-                }
-
-                if(!itemFound) {
-                    container.innerHTML = '<p style="color:#888;">No current announcements.</p>';
-                }
-
-            } catch (error) {
-                console.error("Error loading announcements:", error);
-                document.getElementById('announcements-container').innerHTML = '<p>Unable to load announcements at this time.</p>';
+            if(content['welcome_message']) {
+                document.getElementById('welcome-message').textContent = content['welcome_message'];
+                document.getElementById('welcome-message').classList.remove('loading');
             }
-        }
+            if(content['vision']) {
+                document.getElementById('vision-text').textContent = content['vision'];
+                document.getElementById('vision-text').classList.remove('loading');
+            }
+            if(content['mission']) {
+                document.getElementById('mission-text').textContent = content['mission'];
+                document.getElementById('mission-text').classList.remove('loading');
+            }
+            if(content['email']) document.getElementById('contact-email').textContent = content['email'];
+            if(content['phone']) document.getElementById('contact-phone').textContent = content['phone'];
+            if(content['address']) document.getElementById('contact-address').textContent = content['address'];
 
-        // Initialize App
-        if(SHEET_ID === 'YOUR_SPREADSHEET_ID_HERE') {
-            alert("Please remember to set your Google Sheet ID in the JavaScript block inside index.html!");
-        } else {
-            fetchGeneralContent();
-            fetchAnnouncements();
+        } catch (error) {
+            console.error("Error processing GeneralContent elements:", error);
         }
-    </script>
+    };
+
+    // 2. Handle the Announcements Tab Response
+    window.handleAnnouncements = function(response) {
+        try {
+            console.log("Announcements received successfully.");
+            const rows = response.table.rows;
+            const container = document.getElementById('announcements-container');
+            container.innerHTML = ''; 
+
+            let itemFound = false;
+            rows.forEach(row => {
+                const date = row.c[0] ? row.c[0].v : '';
+                const title = row.c[1] ? row.c[1].v : null;
+                const body = row.c[2] ? row.c[2].v : null;
+
+                if (title && title !== "Title") {
+                    itemFound = true;
+                    const announcementHTML = `
+                        <div class="announcement-item">
+                            <div class="announcement-date">${date}</div>
+                            <h3 class="announcement-title">${title}</h3>
+                            <p style="margin: 5px 0 0 0; font-size:0.95rem;">${body}</p>
+                        </div>
+                    `;
+                    container.insertAdjacentHTML('beforeend', announcementHTML);
+                }
+            });
+
+            if(!itemFound) {
+                container.innerHTML = '<p style="color:#888;">No current announcements.</p>';
+            }
+
+        } catch (error) {
+            console.error("Error processing Announcements structure:", error);
+            document.getElementById('announcements-container').innerHTML = '<p>Unable to load announcements.</p>';
+        }
+    };
+
+    // Initialize requests
+    loadSheetDataByScript('GeneralContent', 'handleGeneralContent');
+    loadSheetDataByScript('Announcements', 'handleAnnouncements');
+</script>
 </body>
 </html>
