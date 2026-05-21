@@ -1,0 +1,319 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Office of Technology Commercialization - Damanhour University</title>
+    <style>
+        :root {
+            --primary-blue: #0b3c5d;
+            --secondary-blue: #1d2731;
+            --accent-green: #5b8c32;
+            --light-bg: #f9f9f9;
+            --text-dark: #333;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            color: var(--text-dark);
+            background-color: #fff;
+            line-height: 1.6;
+        }
+
+        /* Branding Top Bar */
+        .top-branding {
+            background-color: #fff;
+            padding: 10px 5%;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 3px solid var(--primary-blue);
+        }
+
+        .top-branding img {
+            height: 70px;
+            object-fit: contain;
+        }
+
+        /* Main Hero Header */
+        header {
+            background: linear-gradient(135deg, var(--primary-blue), var(--secondary-blue));
+            color: white;
+            padding: 60px 5%;
+            text-align: center;
+        }
+
+        header h1 {
+            margin: 0 0 15px 0;
+            font-size: 2.5rem;
+            font-weight: 600;
+        }
+
+        header p {
+            margin: 0;
+            font-size: 1.2rem;
+            opacity: 0.9;
+        }
+
+        /* Main Layout Container */
+        .container {
+            max-width: 1200px;
+            margin: 40px auto;
+            padding: 0 20px;
+            display: grid;
+            grid-template-columns: 2fr 1fr;
+            gap: 40px;
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        /* Sections Styling */
+        section {
+            margin-bottom: 40px;
+        }
+
+        h2 {
+            color: var(--primary-blue);
+            border-bottom: 2px solid var(--accent-green);
+            padding-bottom: 8px;
+            margin-top: 0;
+        }
+
+        .card {
+            background: var(--light-bg);
+            padding: 25px;
+            border-radius: 6px;
+            border-left: 5px solid var(--primary-blue);
+            margin-bottom: 20px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+        }
+
+        /* Announcements Sidebar */
+        .sidebar {
+            background: #fff;
+            border: 1px solid #ddd;
+            border-radius: 6px;
+            padding: 20px;
+            height: fit-content;
+        }
+
+        .announcement-item {
+            border-bottom: 1px solid #eee;
+            padding: 15px 0;
+        }
+
+        .announcement-item:last-child {
+            border-bottom: none;
+        }
+
+        .announcement-date {
+            font-size: 0.85rem;
+            color: var(--accent-green);
+            font-weight: bold;
+        }
+
+        .announcement-title {
+            margin: 5px 0;
+            color: var(--secondary-blue);
+            font-size: 1.1rem;
+        }
+
+        /* Contact Footer info */
+        footer {
+            background-color: var(--secondary-blue);
+            color: white;
+            text-align: center;
+            padding: 40px 20px;
+            margin-top: 60px;
+        }
+
+        .footer-grid {
+            max-width: 1000px;
+            margin: 0 auto 20px auto;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            font-size: 0.95rem;
+        }
+
+        .footer-bottom {
+            border-top: 1px solid #444;
+            padding-top: 20px;
+            font-size: 0.85rem;
+            opacity: 0.7;
+        }
+
+        /* Loading Skeleton Animation */
+        .loading {
+            color: #888;
+            font-style: italic;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="top-branding">
+        <img src="1.png" alt="Damanhour University Logo">
+        <img src="OTC logo.png" alt="OTC Logo">
+    </div>
+
+    <header>
+        <h1 id="site-title" class="loading">Loading Office Title...</h1>
+        <p id="welcome-message" class="loading">Loading welcome message...</p>
+    </header>
+
+    <div class="container">
+        <main>
+            <section>
+                <h2>Our Vision</h2>
+                <div class="card">
+                    <p id="vision-text" class="loading">Loading vision statement...</p>
+                </div>
+            </section>
+
+            <section>
+                <h2>Our Mission</h2>
+                <div class="card">
+                    <p id="mission-text" class="loading">Loading mission statement...</p>
+                </div>
+            </section>
+        </main>
+
+        <aside class="sidebar">
+            <h2>Latest Announcements</h2>
+            <div id="announcements-container">
+                <p class="loading">Loading announcements...</p>
+            </div>
+        </aside>
+    </div>
+
+    <footer>
+        <div class="footer-grid">
+            <div>
+                <h3>Contact Us</h3>
+                <p><strong>Email:</strong> <span id="contact-email">Loading...</span></p>
+                <p><strong>Phone:</strong> <span id="contact-phone">Loading...</span></p>
+            </div>
+            <div>
+                <h3>Location</h3>
+                <p id="contact-address">Loading campus address...</p>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            &copy; 2026 Office of Technology Commercialization | Damanhour University. All Rights Reserved.
+        </div>
+    </footer>
+
+    <script>
+        // REPLACE THIS STRING WITH YOUR ACTUAL GOOGLE SHEET ID
+        const SHEET_ID = '198o-3rlln-iQ31eMYONbFUMBN-RUnLjUxlOtqxdlyPw';
+
+        // URLs to fetch CSV data from specific sheets/tabs
+        const generalContentUrl = `https://docs.google.com/spreadsheets/d/${SHEET_ID}/gviz/tq?tqx=out:csv&sheet=GeneralContent`;
+        const announcementsUrl = `https://docs.google.com/spreadsheets/d/${SHEET_ID}/gviz/tq?tqx=out:csv&sheet=Announcements`;
+
+        // Helper function to parse CSV format safely
+        function parseCSV(text) {
+            let lines = text.split('\n');
+            return lines.map(line => {
+                // Regex handles commas inside quotes correctly
+                let matches = line.match(/(".*?"|[^",\s]+)(?=\s*,|\s*$)/g) || [];
+                return matches.map(val => val.replace(/^"|"$/g, '').trim());
+            });
+        }
+
+        // Fetch and Populate Header, Vision, Mission, and Contacts
+        async function fetchGeneralContent() {
+            try {
+                const response = await fetch(generalContentUrl);
+                const dataText = await response.text();
+                const rows = parseCSV(dataText);
+
+                // Convert rows to a key-value mapping object
+                const content = {};
+                rows.forEach(row => {
+                    if(row[0] && row[1]) {
+                        content[row[0].toLowerCase()] = row[1];
+                    }
+                });
+
+                // Update UI elements securely
+                if(content['site_title']) {
+                    document.getElementById('site-title').textContent = content['site_title'];
+                    document.getElementById('site-title').classList.remove('loading');
+                }
+                if(content['welcome_message']) {
+                    document.getElementById('welcome-message').textContent = content['welcome_message'];
+                    document.getElementById('welcome-message').classList.remove('loading');
+                }
+                if(content['vision']) {
+                    document.getElementById('vision-text').textContent = content['vision'];
+                    document.getElementById('vision-text').classList.remove('loading');
+                }
+                if(content['mission']) {
+                    document.getElementById('mission-text').textContent = content['mission'];
+                    document.getElementById('mission-text').classList.remove('loading');
+                }
+                if(content['email']) document.getElementById('contact-email').textContent = content['email'];
+                if(content['phone']) document.getElementById('contact-phone').textContent = content['phone'];
+                if(content['address']) document.getElementById('contact-address').textContent = content['address'];
+
+            } catch (error) {
+                console.error("Error loading general data:", error);
+            }
+        }
+
+        // Fetch and Populate Announcements Array
+        async function fetchAnnouncements() {
+            try {
+                const response = await fetch(announcementsUrl);
+                const dataText = await response.text();
+                const rows = parseCSV(dataText);
+
+                const container = document.getElementById('announcements-container');
+                container.innerHTML = ''; // clear loading state
+
+                // Skip index 0 because it's the column headers (Date, Title, Content)
+                let itemFound = false;
+                for (let i = 1; i < rows.length; i++) {
+                    const [date, title, body] = rows[i];
+                    if (title && body) {
+                        itemFound = true;
+                        const announcementHTML = `
+                            <div class="announcement-item">
+                                <div class="announcement-date">${date || ''}</div>
+                                <h3 class="announcement-title">${title}</h3>
+                                <p style="margin: 5px 0 0 0; font-size:0.95rem;">${body}</p>
+                            </div>
+                        `;
+                        container.insertAdjacentHTML('beforeend', announcementHTML);
+                    }
+                }
+
+                if(!itemFound) {
+                    container.innerHTML = '<p style="color:#888;">No current announcements.</p>';
+                }
+
+            } catch (error) {
+                console.error("Error loading announcements:", error);
+                document.getElementById('announcements-container').innerHTML = '<p>Unable to load announcements at this time.</p>';
+            }
+        }
+
+        // Initialize App
+        if(SHEET_ID === 'YOUR_SPREADSHEET_ID_HERE') {
+            alert("Please remember to set your Google Sheet ID in the JavaScript block inside index.html!");
+        } else {
+            fetchGeneralContent();
+            fetchAnnouncements();
+        }
+    </script>
+</body>
+</html>
